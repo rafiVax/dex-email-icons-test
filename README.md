@@ -16,10 +16,10 @@ doesn't distort at the fixed 110x39 display size — confirmed against Figma's d
 not just a guess), the card/footer/details-box icons (`personCheck`, `document`, `trashAlert`,
 `leaf`, `cloudAlert`, `bellDot`, `troubleshoot`, `reminderBell`, `lightbulb`, `history`,
 `fileUser`, `messageCircleWarning`, `windows`, `apple`, `signInAttempt`, `licenseFileKey`,
-`cloudCheck`, `packageBox`, `graduationCap`, `bookOpen`, `users`), and `banner/taglineBg.png` /
-`banner/dashboardBg.png` (2 of the banner variants wired up in `renderBanner()`).
+`cloudCheck`, `packageBox`, `graduationCap`, `bookOpen`, `users`), and `banner/dashboardBg.png`
+(the one remaining banner variant that still needs a real image).
 
-Three other banner variants turned out simple enough to build as real HTML instead of an image —
+Four other banner variants turned out simple enough to build as real HTML instead of an image —
 no asset needed at all:
 - `gauge` (title + two fixed illustrative "47%"/"62%" rings + a gradient line, confirmed against
   Figma node 1551:23531 "Trial Welcome") — two nested-circle `<table>`s, same pattern
@@ -32,10 +32,19 @@ no asset needed at all:
 - `dots` (title over a dot-grid texture + a solid gradient circle in the corner —
   BeforeTrialExpiredExistingCustomer) — the dot-grid is a repeating CSS `radial-gradient()`
   background (16x6 dots at 32x26px spacing), same corner-circle technique as `ring`.
+- `tagline` (large centered gradient-clip-text title over 6 overlapping rounded pills — 3 navy +
+  1 gold/pink accent per row, TrialExpiredExistingCustomer/LicenseExpired) — each pill is an
+  absolutely-positioned `<div>` with percent-based left/width (so the pattern scales with the
+  fluid container) and a fixed px top/height, positioned/sized/colored from the exact rotated
+  `<rect>` geometry in the real Figma export, in the same paint order as the source SVG so the
+  overlaps composite identically. Verified pixel-exact against the source via DOM measurement,
+  not just eyeballed — an earlier attempt at this exact conversion (hand-coded, not measured)
+  wasn't accurate enough and was reverted back to an image; this one was built from real numbers.
 
-All three rely on `overflow:hidden` clipping a table cell, which Outlook's Word engine doesn't
-honor. For `ring`/`dots` that means the circle shows unclipped past the banner's edge on Outlook
-desktop specifically — everywhere else (Gmail, Apple Mail, Outlook.com, etc.) renders correctly.
+All four rely on `overflow:hidden` clipping a table cell, which Outlook's Word engine doesn't
+honor. For `ring`/`dots`/`tagline` that means the decorative shapes show unclipped past the
+banner's edge on Outlook desktop specifically — everywhere else (Gmail, Apple Mail, Outlook.com,
+etc.) renders correctly.
 
 **Not used by any template yet**, kept so a future template can adopt one without re-exporting
 from Figma:
