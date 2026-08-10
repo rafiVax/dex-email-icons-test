@@ -21,10 +21,12 @@ kept here so a future template can adopt one without re-exporting from Figma:
   pre-colored to match the pink/green/orange bg-pairing rule (`archiveX`, `badgePlus`,
   `bellRing`, `bookMarked`, `circleDotDashed`, `fileSpreadsheet`, `fileText`, `layoutGrid`,
   `tvMinimalPlay`).
-- `email-icons/banner/future/` — 16 additional 520x173-at-4x (2080x692px) banner background
-  variants from the same Figma banner component set as the 3 live ones. Most have
-  "Discover. Evaluate. Succeed." baked into the image; a few (`weeklyReportHeaderBg`,
-  `trialSplitBadgeBg`, `areaChartStatsBg`, `statCardsProgressBg`) don't and look like
-  sub-components for a different (e.g. usage-report) email family rather than the trial-welcome
-  banner. `skeletonRowsBg` is a flat-image version of what `renderBannerSkeleton()` already
-  builds live in HTML/table code — kept here as a fallback, not currently used.
+- `email-icons/banner/future/` — 11 additional 520x173-at-4x (2080x692px) banner background
+  variants from the same Figma banner component set as the 3 live ones, all with
+  "Discover. Evaluate. Succeed." baked in and otherwise purely decorative (no dates, counts,
+  percentages, or other per-recipient data baked into the image — those can't be a shared
+  static asset). `skeletonRowsBg` is a flat-image version of what `renderBannerSkeleton()`
+  already builds live in HTML/table code — kept here as a fallback, not currently used.
+  Variants from this Figma set that had real-looking data baked in (a date range, TB/count
+  numbers, percentages, a specific trial-length badge) were deliberately left out — those need
+  to stay as live HTML/text if ever built, not a flattened image.
