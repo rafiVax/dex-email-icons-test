@@ -21,15 +21,25 @@ kept here so a future template can adopt one without re-exporting from Figma:
   pre-colored to match the pink/green/orange bg-pairing rule (`archiveX`, `badgePlus`,
   `bellRing`, `bookMarked`, `circleDotDashed`, `fileSpreadsheet`, `fileText`, `layoutGrid`,
   `tvMinimalPlay`).
-- `email-icons/banner/future/` — 10 additional 520x173-at-4x (2080x692px) banner background
+- `email-icons/banner/future/` — 5 additional 520x173-at-4x (2080x692px) banner background
   variants from the same Figma banner component set as the 3 live ones, **background-only —
   all baked-in text (title, status labels) was stripped**, matching how the 3 live banners work
-  (`renderBanner()` overlays real HTML text on top of a background image, same pattern used
-  here for `bannerBg.png`/`taglineBg.png`). Text was identified and removed by SVG path length
-  (glyph-outline paths run 4000+ chars; every decorative shape in this set is under 350) and
-  confirmed by rendering before/after. `skeletonRowsBg` is a flat-image version of what
-  `renderBannerSkeleton()` already builds live in HTML/table code — kept here as a fallback,
-  not currently used. Variants from this Figma set with real-looking data baked in (a date
-  range, TB/count numbers, percentages, a specific trial-length badge) were left out entirely —
-  that content has to stay as live HTML/text if ever built, not a flattened image. Also left
-  out: a duplicate of the live `bannerBg.png` dots/corner-circle art.
+  (`renderBanner()` overlays real HTML text on top of a background image). Only variants whose
+  visual effect *can't* be done reliably in table-based email HTML (Outlook's Word rendering
+  engine is the real constraint, not browsers) are kept as images: `diagonalRibbonsBg` (rotated
+  shapes), `circleCornerPlainBg` / `twoBlobCornersBg` (a shape peeking from behind the banner's
+  own rounded corner needs overflow-clipping/absolute positioning), `borderedBoxBg` (a
+  *gradient*-colored border — `border-image`/gradient borders have no Outlook equivalent),
+  `concentricRingsBg` (nested concentric circles, fragile across clients).
+
+  Left out on purpose:
+  - Variants with real-looking data baked in (a date range, TB/count numbers, percentages, a
+    specific trial-length badge) — that content has to stay as live HTML/text if ever built,
+    not a flattened image.
+  - A duplicate of the live `bannerBg.png` dots/corner-circle art.
+  - Variants that are simple enough to just build as live HTML — solid/gradient bars, lines, and
+    dots, the same pattern `renderBannerSkeleton()`'s gradient line and `renderUsageProgressBox()`
+    already use elsewhere in `components.ts`. No image needed, ever: a "skeleton rows" banner
+    (already built, `renderBannerSkeleton()`), a right-aligned-title + 3 gradient bars, a single
+    partial-fill gradient progress bar, stacked words each with a gradient underline, and a
+    vertical gradient accent bar + status dot.
