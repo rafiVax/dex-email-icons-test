@@ -15,7 +15,11 @@ details-box icons (`personCheck`, `document`, `trashAlert`, `leaf`, `cloudAlert`
 `troubleshoot`, `reminderBell`, `lightbulb`, `history`, `fileUser`, `messageCircleWarning`,
 `windows`, `apple`, `signInAttempt`, `licenseFileKey`, `cloudCheck`, `packageBox`,
 `graduationCap`, `bookOpen`, `users`), and `banner/bannerBg.png` / `banner/taglineBg.png` /
-`banner/dashboardBg.png` (the 3 banner variants wired up in `renderBanner()`).
+`banner/dashboardBg.png` / `banner/gaugeBg.png` (the 4 banner variants wired up in
+`renderBanner()`). `gaugeBg.png` bakes in two fixed illustrative "47%"/"62%" gauge percentages —
+confirmed against the real Figma node (1551:23531, "Trial Welcome") that these are static
+decorative content reused across this component family, not per-recipient data, same as
+`dashboardBg.png`'s baked-in mock stats.
 
 **Not used by any template yet**, kept so a future template can adopt one without re-exporting
 from Figma:
@@ -34,9 +38,11 @@ from Figma:
   concentric circles, fragile across clients).
 
 Deliberately left out of this repo entirely:
-- Banner variants from the same Figma set with real-looking data baked in (a date range,
-  TB/count numbers, percentages, a specific trial-length badge) — that content has to stay as
-  live HTML/text if ever built, not a flattened image.
+- Banner variants from the same Figma set with real *per-recipient* data baked in (a date range,
+  TB/count numbers, a specific trial-length badge) — that content has to stay as live HTML/text
+  if ever built, not a flattened image. (Percentages alone aren't a reliable signal — `gaugeBg`
+  also has baked-in percentages, but they're fixed illustrative content, confirmed against the
+  real Figma node before treating it as safe to bake.)
 - A duplicate of the live `bannerBg.png` dots/corner-circle art.
 - Banner variants simple enough to just build as live HTML — solid/gradient bars, lines, and
   dots, the same pattern `renderBannerSkeleton()`'s gradient line and `renderUsageProgressBox()`
