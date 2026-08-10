@@ -16,48 +16,44 @@ doesn't distort at the fixed 110x39 display size — confirmed against Figma's d
 not just a guess), the card/footer/details-box icons (`personCheck`, `document`, `trashAlert`,
 `leaf`, `cloudAlert`, `bellDot`, `troubleshoot`, `reminderBell`, `lightbulb`, `history`,
 `fileUser`, `messageCircleWarning`, `windows`, `apple`, `signInAttempt`, `licenseFileKey`,
-`cloudCheck`, `packageBox`, `graduationCap`, `bookOpen`, `users`), and `banner/dashboardBg.png`
-(the one remaining banner variant that still needs a real image).
+`cloudCheck`, `packageBox`, `graduationCap`, `bookOpen`, `users`), and `banner/dashboardBg.png` /
+`banner/bannerBg.png` / `banner/taglineBg.png` / `banner/ringBg.png` (4 of the 5 banner variants
+— everything except `gauge`).
 
-Four other banner variants turned out simple enough to build as real HTML instead of an image —
-no asset needed at all:
-- `gauge` (title + two fixed illustrative "47%"/"62%" rings + a gradient line, confirmed against
-  Figma node 1551:23531 "Trial Welcome") — two nested-circle `<table>`s, same pattern
-  `renderCard()`'s icon badge already uses. Building this as HTML is what fixed a real bug where
-  the old fixed-size image + live-text overlay drifted apart on narrow mobile widths.
-- `ring` (title + a single gradient ring peeking from the banner's bottom-right corner, no
-  dot-grid — BeforeDeletion/DataDeletion) — `position:absolute` circle, right-anchored (not
-  left-anchored) so it stays glued to the corner at any container width, clipped by
-  `overflow:hidden` on the rounded-corner banner cell.
-- `dots` (title over a dot-grid texture + a solid gradient circle in the corner —
-  BeforeTrialExpiredExistingCustomer) — the dot-grid is a repeating CSS `radial-gradient()`
-  background (16x6 dots at 32x26px spacing), same corner-circle technique as `ring`.
-- `tagline` (large centered gradient-clip-text title over 6 overlapping rounded pills — 3 navy +
-  1 gold/pink accent per row, TrialExpiredExistingCustomer/LicenseExpired) — each pill is an
-  absolutely-positioned `<div>` with percent-based left/width (so the pattern scales with the
-  fluid container) and a fixed px top/height, positioned/sized/colored from the exact rotated
-  `<rect>` geometry in the real Figma export, in the same paint order as the source SVG so the
-  overlaps composite identically. Verified pixel-exact against the source via DOM measurement,
-  not just eyeballed — an earlier attempt at this exact conversion (hand-coded, not measured)
-  wasn't accurate enough and was reverted back to an image; this one was built from real numbers.
+Only `gauge` (title + two fixed illustrative "47%"/"62%" rings + a gradient line, confirmed
+against Figma node 1551:23531 "Trial Welcome") is real HTML instead of an image — two
+nested-circle `<table>`s, same pattern `renderCard()`'s icon badge already uses. No asset needed.
+Building this as HTML is what fixed a real bug where the old fixed-size image + live-text overlay
+drifted apart on narrow mobile widths.
 
-All four rely on `overflow:hidden` clipping a table cell, which Outlook's Word engine doesn't
-honor. For `ring`/`dots`/`tagline` that means the decorative shapes show unclipped past the
-banner's edge on Outlook desktop specifically — everywhere else (Gmail, Apple Mail, Outlook.com,
-etc.) renders correctly.
+`tagline`/`dots`/`ring` (the pills / dot-grid+circle / single-ring corner-peeking variants) were
+each rebuilt as real HTML **twice**, verified pixel-exact via Playwright both times, and broke on
+a real Gmail send both times — this isn't an Outlook-only edge case, it's Gmail itself:
+1. `position:absolute` shapes + `overflow:hidden` clipping — Gmail strips the `position` property
+   entirely, flattening every absolutely-positioned element back into normal block flow (the 6
+   tagline pills rendered as plain stacked bars, not overlapping at all).
+2. `float:right` + negative margins + `overflow:hidden` (no `position` anywhere, specifically to
+   dodge the first failure) — Gmail *also* zeroes out negative margin values, so the float just
+   settled at its natural resting spot: a complete, unclipped circle sitting inside the box, no
+   corner-peeking effect.
+
+Common thread: Gmail blocks every CSS mechanism that lets content escape its own box, so a shape
+that genuinely bleeds past a rounded corner isn't achievable there without an image. All three
+are images again, for good — don't retry this without a genuinely new mechanism, not a variation
+on "let an element escape its box."
 
 **Not used by any template yet**, kept so a future template can adopt one without re-exporting
 from Figma:
 - 9 more card icons, already 40x40-at-4x (160x160px) and pre-colored to match the
   pink/green/orange bg-pairing rule: `archiveX`, `badgePlus`, `bellRing`, `bookMarked`,
   `circleDotDashed`, `fileSpreadsheet`, `fileText`, `layoutGrid`, `tvMinimalPlay`.
-- 3 more banner backgrounds (520x173-at-4x / 2080x692px), background-only: `diagonalRibbonsBg`,
-  `twoBlobCornersBg`, `borderedBoxBg`, `concentricRingsBg`. These are the ones whose visual
-  effect still can't be done reliably in table-based email HTML: `diagonalRibbonsBg` (rotated
-  shapes), `twoBlobCornersBg` (two corner-peeking shapes, not just one — the single-circle case
-  is now `ring`, built as HTML), `borderedBoxBg` (a *gradient*-colored border — `border-image`
-  has no Outlook equivalent), `concentricRingsBg` (nested concentric circles, more fragile than
-  the single-ring case `ring` already covers).
+- 4 more banner backgrounds (520x173-at-4x / 2080x692px), background-only: `diagonalRibbonsBg`,
+  `twoBlobCornersBg`, `borderedBoxBg`, `concentricRingsBg`. Same reasoning as `ring`/`dots`/
+  `tagline` above — anything that needs a shape to overlap or bleed past its own box isn't
+  achievable in real email HTML (Gmail specifically), so these stay images: `diagonalRibbonsBg`
+  (rotated shapes), `twoBlobCornersBg` (two corner-peeking shapes), `borderedBoxBg` (a
+  *gradient*-colored border — `border-image` has no email-client equivalent at all),
+  `concentricRingsBg` (nested concentric circles).
 
 Deliberately left out of this repo entirely:
 - Banner variants from the same Figma set with real *per-recipient* data baked in (a date range,
