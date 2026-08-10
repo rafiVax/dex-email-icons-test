@@ -10,7 +10,10 @@ folder (icons directly here, banners under `banner/`). Not every file here is re
 yet — check `infra-notifications-service`'s `src/utils/emailShell/tokens.ts` /
 `src/utils/emailShell/icons/icons.ts` for what `emailIconsBaseUrl` actually wires up.
 
-**Live** (referenced by `ICON_SPECS/renderBanner()` today): `logo.png`, the card/footer/
+**Live** (referenced by `ICON_SPECS/renderBanner()` today): `logo.png` / `logoDark.png` (the
+dark-mode-swap logo, all-white wordmark, padded to the same aspect ratio as `logo.png` so it
+doesn't distort at the fixed 110x39 display size — confirmed against Figma's dark-mode frames,
+not just a guess), the card/footer/
 details-box icons (`personCheck`, `document`, `trashAlert`, `leaf`, `cloudAlert`, `bellDot`,
 `troubleshoot`, `reminderBell`, `lightbulb`, `history`, `fileUser`, `messageCircleWarning`,
 `windows`, `apple`, `signInAttempt`, `licenseFileKey`, `cloudCheck`, `packageBox`,
